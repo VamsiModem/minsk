@@ -15,7 +15,7 @@
         LParenToken,
         RParenToken,
        
-        NumberExpression,
+        LiteralExpression,
         BinaryExpression,
         ParenthesizedExpression
     }
