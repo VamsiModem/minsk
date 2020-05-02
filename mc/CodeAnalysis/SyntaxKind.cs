@@ -1,16 +1,20 @@
 ﻿namespace Minsk.Code
 {
-    enum SyntaxKind{
-        NumberToken, 
+    public enum SyntaxKind{
+
+        BadToken,
+        EOFToken,
         WhiteSpaceToken,
+
+        NumberToken, 
+        
         PlusToken,
         MinusToken,
         StarToken,
         SlashToken,
         LParenToken,
         RParenToken,
-        BadToken,
-        EOFToken,
+       
         NumberExpression,
         BinaryExpression,
         ParenthesizedExpression

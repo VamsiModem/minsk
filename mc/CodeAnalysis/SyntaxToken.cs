@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Minsk.Code
 {
-    class SyntaxToken :SyntaxNode{
+    public sealed class SyntaxToken :SyntaxNode{
         public readonly int position;
         public readonly string text;
         public readonly object value;

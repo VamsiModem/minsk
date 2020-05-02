@@ -2,7 +2,7 @@ using System;
 
 namespace Minsk.Code
 {
-    class Evaluator
+    public class Evaluator
     {
         private readonly ExpressionSyntax _root;
 
@@ -17,8 +17,8 @@ namespace Minsk.Code
 
         private int EvaluateExpression(ExpressionSyntax root)
         {
-            if(root is NumberExpressionSyntax n)
-                return (int)n.NumberToken.value;
+            if(root is LiteralExpressionSyntax n)
+                return (int)n.LiteralToken.value;
             if(root is BinaryExpressionSyntax b)
             {
                 var left =  EvaluateExpression(b.Left);

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Minsk.Code
 {
-    class Parser
+    internal sealed class Parser
     {
         private readonly SyntaxToken[] _tokens;
         private int _position;
@@ -36,7 +36,7 @@ namespace Minsk.Code
             return current;
         }
 
-        private SyntaxToken Match(SyntaxKind kind){
+        private SyntaxToken MatchToken(SyntaxKind kind){
             if(Current.Kind == kind)
                 return NextToken();
             _diagnostics.Add($"Error: Unexpected token <{Current.Kind}>, expected <{kind}>");
@@ -66,8 +66,8 @@ namespace Minsk.Code
             return ParseTerm();
         }
         public SyntaxTree Parse(){
-            var expr = ParseTerm();
-            var eofToken = Match(SyntaxKind.EOFToken);
+            var expr = ParseExpression();
+            var eofToken = MatchToken(SyntaxKind.EOFToken);
             return new SyntaxTree(_diagnostics, expr, eofToken);
         }
 
@@ -75,11 +75,11 @@ namespace Minsk.Code
             if(Current.Kind == SyntaxKind.LParenToken){
                 var left = NextToken();
                 var expr = ParseExpression();
-                var right = Match(SyntaxKind.RParenToken);
+                var right = MatchToken(SyntaxKind.RParenToken);
                 return new ParenthesizedExpressionSyntax(left, expr, right);
             }
-            var numberToken = Match(SyntaxKind.NumberToken);
-            return new NumberExpressionSyntax(numberToken);
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
+            return new LiteralExpressionSyntax(numberToken);
         }
     }
 }

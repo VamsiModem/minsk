@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Minsk.Code
 {
-    sealed class SyntaxTree{
+    internal sealed class SyntaxTree{
         public SyntaxTree(IEnumerable<string> diags, ExpressionSyntax root, SyntaxToken eofToken)
         {
             Diags = diags.ToArray();

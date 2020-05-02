@@ -6,12 +6,11 @@ namespace Minsk
 {
     class Program
     {
-        static void Main(string[] args)
+        internal static void Main(string[] args)
         {
             bool showTree = false;
             while(true){
                 Console.Write(">");
-                var color = Console.ForegroundColor;
                 var line = Console.ReadLine();
                 if(string.IsNullOrWhiteSpace(line)){
                     return;
@@ -36,7 +35,7 @@ namespace Minsk
                     foreach(var d in parser.Diagnostics){
                         Console.WriteLine(d);
                     }
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }else{
                     var e = new Evaluator(syntaxTree.Root);
                     var result = e.Evaluate();
