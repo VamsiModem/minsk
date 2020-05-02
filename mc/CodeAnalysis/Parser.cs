@@ -36,6 +36,31 @@ namespace Minsk.Code
             return current;
         }
 
+        private ExpressionSyntax ParseExpression(int parentPrecedence = 0){
+            var left = ParsePrimaryExpression();
+            while(true){
+                var precedence = GetBinaryOperatorPrecendence(Current.Kind);
+                if(precedence == 0 || precedence <= parentPrecedence)
+                    break;
+                var operatorToken = NextToken();
+                var right = ParseExpression(precedence);
+                left = new BinaryExpressionSyntax(left, operatorToken, right);
+            }
+            return left;
+        }
+
+        private static int GetBinaryOperatorPrecendence(SyntaxKind kind){
+            switch(kind){
+                case SyntaxKind.PlusToken:
+                case SyntaxKind.MinusToken:
+                    return 1;
+                case SyntaxKind.StarToken:
+                case SyntaxKind.SlashToken:
+                    return 2;
+                default:
+                    return 0;
+            }
+        }
         private SyntaxToken MatchToken(SyntaxKind kind){
             if(Current.Kind == kind)
                 return NextToken();
@@ -43,28 +68,7 @@ namespace Minsk.Code
             return new SyntaxToken(kind, Current.position, null, null);
         }
         private SyntaxToken Current => Peek(0);
-        public ExpressionSyntax ParseTerm(){
-            var left = ParseFactor();
-            while(Current.Kind == SyntaxKind.PlusToken || Current.Kind == SyntaxKind.MinusToken){
-                var operatorToken = NextToken();
-                var right = ParseFactor();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-            return left;
-        }
-        public ExpressionSyntax ParseFactor(){
-            var left = ParsePrimaryExpression();
-            while(Current.Kind == SyntaxKind.StarToken || Current.Kind == SyntaxKind.SlashToken){
-                var operatorToken = NextToken();
-                var right = ParsePrimaryExpression();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-            return left;
-        }
-
-        private ExpressionSyntax ParseExpression(){
-            return ParseTerm();
-        }
+    
         public SyntaxTree Parse(){
             var expr = ParseExpression();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
