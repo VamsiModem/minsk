@@ -14,7 +14,7 @@ namespace Minsk.Code
             var tokens = new List<SyntaxToken>();
             SyntaxToken token;
             do{
-                token = lexer.NextToken();
+                token = lexer.Lex();
                 if(token.Kind != SyntaxKind.WhiteSpaceToken && token.Kind != SyntaxKind.BadToken){
                     tokens.Add(token);
                 }
