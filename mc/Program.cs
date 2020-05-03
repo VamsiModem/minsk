@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Minsk.Code;
+using Minsk.Code.Syntax;
 namespace Minsk
 {
     class Program

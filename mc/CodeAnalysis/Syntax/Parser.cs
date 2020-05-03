@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Minsk.Code
+namespace Minsk.Code.Syntax
 {
     internal sealed class Parser
     {

@@ -1,4 +1,4 @@
-namespace Minsk.Code
+namespace Minsk.Code.Syntax
 {
     internal static class SyntaxFacts{
         public static int GetBinaryOperatorPrecendence(this SyntaxKind kind){

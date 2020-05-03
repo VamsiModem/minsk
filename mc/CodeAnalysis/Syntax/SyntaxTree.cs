@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Minsk.Code
+namespace Minsk.Code.Syntax
 {
     internal sealed class SyntaxTree{
         public SyntaxTree(IEnumerable<string> diags, ExpressionSyntax root, SyntaxToken eofToken)
