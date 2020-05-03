@@ -1,0 +1,10 @@
+namespace Minsk.Code.Binding
+{
+    enum BoundBinaryOperatorKind
+    {
+        Addition,
+        Subtraction,
+        Multiplication,
+        Division
+    }
+}

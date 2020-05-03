@@ -1,3 +1,5 @@
+using System;
+
 namespace Minsk.Code.Syntax
 {
     internal static class SyntaxFacts{
@@ -20,6 +22,18 @@ namespace Minsk.Code.Syntax
                     return 3;
                 default:
                     return 0;
+            }
+        }
+
+        internal static SyntaxKind GetKeyWordKind(string text)
+        {
+            switch(text){
+                case "true":
+                    return SyntaxKind.TrueKeyword;
+                case "false":
+                    return SyntaxKind.FalseKeyword;
+                default:
+                    return SyntaxKind.Identifier;
             }
         }
     }

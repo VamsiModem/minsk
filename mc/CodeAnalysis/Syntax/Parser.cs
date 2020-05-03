@@ -61,7 +61,7 @@ namespace Minsk.Code.Syntax
             if(Current.Kind == kind)
                 return NextToken();
             _diagnostics.Add($"Error: Unexpected token <{Current.Kind}>, expected <{kind}>");
-            return new SyntaxToken(kind, Current.position, null, null);
+            return new SyntaxToken(kind, Current.Position, null, null);
         }
         private SyntaxToken Current => Peek(0);
     
@@ -72,11 +72,23 @@ namespace Minsk.Code.Syntax
         }
 
         private ExpressionSyntax ParsePrimaryExpression(){
-            if(Current.Kind == SyntaxKind.LParenToken){
-                var left = NextToken();
-                var expr = ParseExpression();
-                var right = MatchToken(SyntaxKind.RParenToken);
-                return new ParenthesizedExpressionSyntax(left, expr, right);
+            switch (Current.Kind)
+            {
+                case SyntaxKind.LParenToken:
+                {
+                    var left = NextToken();
+                    var expr = ParseExpression();
+                    var right = MatchToken(SyntaxKind.RParenToken);
+                    return new ParenthesizedExpressionSyntax(left, expr, right);
+                }
+
+                case SyntaxKind.TrueKeyword:
+                case SyntaxKind.FalseKeyword:
+                {
+                    var keywordToken = NextToken();
+                    var value = Current.Kind == SyntaxKind.TrueKeyword;
+                    return new LiteralExpressionSyntax(keywordToken, value);
+                }
             }
             var numberToken = MatchToken(SyntaxKind.NumberToken);
             return new LiteralExpressionSyntax(numberToken);

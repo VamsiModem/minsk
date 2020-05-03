@@ -18,6 +18,9 @@
         LiteralExpression,
         BinaryExpression,
         ParenthesizedExpression,
-        UnaryExpression
+        UnaryExpression,
+        TrueKeyword,
+        FalseKeyword,
+        Identifier
     }
 }

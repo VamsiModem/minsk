@@ -10,7 +10,7 @@ namespace Minsk.Code.Syntax
             Operand = operand;
         }
         public override SyntaxKind Kind => SyntaxKind.UnaryExpression;
-        public SyntaxNode OperatorToken { get; }
+        public SyntaxToken OperatorToken { get; }
         public ExpressionSyntax Operand { get; }
 
         public override IEnumerable<SyntaxNode> GetChildren()
