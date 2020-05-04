@@ -7,7 +7,6 @@ namespace Minsk.Code.Syntax
         public int Position  {get;}
         public string Text {get;}
         public object Value {get;}
-
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {
             this.Kind = kind;

@@ -21,7 +21,7 @@ namespace Minsk.Code
             if(root is BoundLiteralExpression n)
                 return n.Value;
             if(root is BoundUnaryExpression u){
-                var operand = EvaluateExpression(u.Operand);
+                var operand = (int)EvaluateExpression(u.Operand);
                 switch (u.OperatorKind)
                 {
                     case BoundUnaryOperatorKind.Identity:
@@ -36,8 +36,8 @@ namespace Minsk.Code
             }
             if(root is BoundBinaryExpression b)
             {
-                var left =  EvaluateExpression(b.Left);
-                var right = EvaluateExpression(b.Right);
+                var left =  (int)EvaluateExpression(b.Left);
+                var right = (int)EvaluateExpression(b.Right);
                 switch (b.OperatorKind)
                 {
                     case BoundBinaryOperatorKind.Addition:
