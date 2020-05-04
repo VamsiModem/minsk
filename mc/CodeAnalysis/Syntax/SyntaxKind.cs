@@ -21,6 +21,9 @@
         UnaryExpression,
         TrueKeyword,
         FalseKeyword,
-        Identifier
+        Identifier,
+        BangToken,
+        AmpresandAmpresandToken,
+        PipePipeToken
     }
 }

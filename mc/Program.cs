@@ -35,9 +35,9 @@ namespace Minsk
                     PrettyPrint(syntaxTree.Root);
                 }
                 var diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics);
-                if(syntaxTree.Diagnostics.Any()){
+                if(diagnostics.Any()){
                     Console.ForegroundColor = ConsoleColor.DarkRed;
-                    foreach(var d in parser.Diagnostics){
+                    foreach(var d in diagnostics){
                         Console.WriteLine(d);
                     }
                     Console.ResetColor();
