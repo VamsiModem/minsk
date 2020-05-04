@@ -1,6 +1,6 @@
 using System;
 
-namespace Minsk.Code.Binding
+namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundUnaryExpression : BoundExpression
     {

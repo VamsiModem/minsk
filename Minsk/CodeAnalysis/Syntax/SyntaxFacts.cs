@@ -1,6 +1,6 @@
 using System;
 
-namespace Minsk.Code.Syntax
+namespace Minsk.CodeAnalysis.Syntax
 {
     internal static class SyntaxFacts{
         public static int GetBinaryOperatorPrecendence(this SyntaxKind kind){

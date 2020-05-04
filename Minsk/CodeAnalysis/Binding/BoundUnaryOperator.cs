@@ -1,7 +1,7 @@
 using System;
-using Minsk.Code.Syntax;
+using Minsk.CodeAnalysis.Syntax;
 
-namespace Minsk.Code.Binding
+namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundUnaryOperator{
         public BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)  

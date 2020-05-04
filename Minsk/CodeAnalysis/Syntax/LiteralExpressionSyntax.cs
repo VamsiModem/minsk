@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Minsk.Code.Syntax
+namespace Minsk.CodeAnalysis.Syntax
 {
     sealed class LiteralExpressionSyntax : ExpressionSyntax
     {

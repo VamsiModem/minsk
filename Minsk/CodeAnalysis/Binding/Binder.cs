@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Minsk.Code.Syntax;
+using Minsk.CodeAnalysis.Syntax;
 
-namespace Minsk.Code.Binding
+namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class Binder{
         private readonly List<string> _diagnostics = new List<string>();

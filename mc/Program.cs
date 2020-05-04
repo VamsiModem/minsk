@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Minsk.Code;
-using Minsk.Code.Binding;
-using Minsk.Code.Syntax;
+using Minsk.CodeAnalysis;
+using Minsk.CodeAnalysis.Binding;
+using Minsk.CodeAnalysis.Syntax;
 namespace Minsk
 {
     class Program
@@ -26,25 +26,21 @@ namespace Minsk
                     Console.Clear();
                     continue;
                 }
-                var parser = new Parser(line);
-                var syntaxTree = parser.Parse();
-                var binder = new Binder();
-                var boundExpression = binder.BindExpression(syntaxTree.Root);
+                var syntaxTree = SyntaxTree.Parse(line);
+                var compilation = new Compilation(syntaxTree);
+                var result = compilation.Evaluate();
 
                 if(showTree){
                     PrettyPrint(syntaxTree.Root);
                 }
-                var diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics);
-                if(diagnostics.Any()){
+                if(!result.Diagnostics.Any()){
+                    Console.WriteLine(result.Value);
+                }else{
                     Console.ForegroundColor = ConsoleColor.DarkRed;
-                    foreach(var d in diagnostics){
+                    foreach(var d in result.Diagnostics){
                         Console.WriteLine(d);
                     }
                     Console.ResetColor();
-                }else{
-                    var e = new Evaluator(boundExpression);
-                    var result = e.Evaluate();
-                    Console.WriteLine(result);
                 }
             }
         }

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Minsk.Code.Syntax
+namespace Minsk.CodeAnalysis.Syntax
 {
     public sealed class SyntaxToken :SyntaxNode{
         public int Position  {get;}

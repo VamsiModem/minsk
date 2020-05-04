@@ -1,4 +1,4 @@
-namespace Minsk.Code.Binding
+namespace Minsk.CodeAnalysis.Binding
 {
     internal abstract class BoundNode{
         public abstract BoundNodeKind Kind {get;}
