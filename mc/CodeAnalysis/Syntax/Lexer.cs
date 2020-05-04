@@ -75,8 +75,6 @@ namespace Minsk.Code.Syntax
                     return new SyntaxToken(SyntaxKind.LParenToken, _position++, "(", null);
                 case ')':
                     return new SyntaxToken(SyntaxKind.RParenToken, _position++, ")", null);
-                case '!':
-                    return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
                 case '&':
                     if(LookAhead == '&')
                         return new SyntaxToken(SyntaxKind.AmpresandAmpresandToken, _position += 2, "&&", null);
@@ -85,8 +83,15 @@ namespace Minsk.Code.Syntax
                     if(LookAhead == '|')
                         return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "||", null);
                     break;
-
-
+                case '=':
+                    if(LookAhead == '=')
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, _position += 2, "==", null);
+                    break;
+                case '!':
+                    if(LookAhead == '=')
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, _position += 2, "!=", null);
+                    else
+                        return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
             }
             _diagnostics.Add($"Error: bad character input: '{Current}'");
             return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position-1, 1), null);

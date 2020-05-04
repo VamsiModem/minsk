@@ -24,6 +24,8 @@
         Identifier,
         BangToken,
         AmpresandAmpresandToken,
-        PipePipeToken
+        PipePipeToken,
+        EqualsEqualsToken,
+        BangEqualsToken
     }
 }

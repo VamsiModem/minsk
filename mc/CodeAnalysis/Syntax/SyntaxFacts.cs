@@ -8,9 +8,12 @@ namespace Minsk.Code.Syntax
                 
                 case SyntaxKind.StarToken:
                 case SyntaxKind.SlashToken:
-                    return 4;
+                    return 5;
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
+                    return 4;
+                case SyntaxKind.EqualsEqualsToken:
+                case SyntaxKind.BangEqualsToken:
                     return 3;
                 case SyntaxKind.AmpresandAmpresandToken:
                     return 2;
@@ -25,7 +28,7 @@ namespace Minsk.Code.Syntax
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
                 case SyntaxKind.BangToken:
-                    return 5;
+                    return 6;
                 default:
                     return 0;
             }

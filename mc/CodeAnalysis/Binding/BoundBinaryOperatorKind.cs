@@ -7,6 +7,8 @@ namespace Minsk.Code.Binding
         Multiplication,
         Division,
         LogicalOr,
-        LogicalAnd
+        LogicalAnd,
+        Equals,
+        NotEquals
     }
 }
