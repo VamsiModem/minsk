@@ -10,7 +10,6 @@ namespace Minsk.Code.Syntax
             Root = root;
             eofToken = EofToken;
         }
-
         public IReadOnlyList<string> Diagnostics { get; }
         public ExpressionSyntax Root { get; }
         public SyntaxToken EofToken { get; }

@@ -57,7 +57,7 @@ namespace Minsk.Code.Syntax
                 var length = _position - start;
                 var text = _text.Substring(start, length);
                 var kind = SyntaxFacts.GetKeyWordKind(text);
-                return new SyntaxToken(SyntaxKind.WhiteSpaceToken, start, text, null);
+                return new SyntaxToken(kind, start, text, null);
             }
 
             switch (Current)
