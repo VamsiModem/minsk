@@ -1,6 +1,9 @@
 # ASP.NET Core (.NET Framework)
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 5d484807f102670aef618aac5037fb70a7ba1e09
 # Build and test ASP.NET Core projects targeting the full .NET Framework.
 # Add steps that publish symbols, save build artifacts, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
@@ -18,7 +21,6 @@ variables:
 
 steps:
 - task: NuGetToolInstaller@1
-
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
