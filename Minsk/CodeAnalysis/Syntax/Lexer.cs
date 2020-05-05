@@ -10,8 +10,8 @@ namespace Minsk.CodeAnalysis.Syntax
         }
 
         private readonly string _text;
-        private List<string> _diagnostics = new List<string>();
-        public IEnumerable<string> Diagnostics => _diagnostics;
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
+        public DiagnosticBag Diagnostics => _diagnostics;
         private int _position;
         private char Current => Peek(0);
         private char LookAhead => Peek(1);
@@ -24,24 +24,23 @@ namespace Minsk.CodeAnalysis.Syntax
         }
         private void Next(){ _position++; }
         public SyntaxToken Lex(){
+            var start = _position;
             if(_position >= _text.Length){
                 return new SyntaxToken(SyntaxKind.EOFToken, _position, "\0", null);
             }
             if(char.IsDigit(Current)){
-                var start = _position;
                 while(char.IsDigit(Current))
                     Next();
                 
                 var length = _position - start;
                 var text = _text.Substring(start, length);
                 if(!int.TryParse(text, out var value)){
-                    _diagnostics.Add($"The number {_text} can not be represented by an int32");
+                    _diagnostics.ReportInvalidNumber(new TextSpan(start, length), _text, typeof(int));
                 }
                 return new SyntaxToken(SyntaxKind.NumberToken, start, text, value);
             }
 
             if(char.IsWhiteSpace(Current)){
-                var start = _position;
                 while(char.IsWhiteSpace(Current))
                     Next();
                 
@@ -51,7 +50,6 @@ namespace Minsk.CodeAnalysis.Syntax
             }
 
              if(char.IsLetter(Current)){
-                var start = _position;
                 while(char.IsLetter(Current))
                     Next();
                 
@@ -80,20 +78,26 @@ namespace Minsk.CodeAnalysis.Syntax
                         return new SyntaxToken(SyntaxKind.AmpresandAmpresandToken, _position += 2, "&&", null);
                     break;
                 case '|':
-                    if(LookAhead == '|')
-                        return new SyntaxToken(SyntaxKind.PipePipeToken, _position += 2, "||", null);
+                    if(LookAhead == '|'){
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, start, "||", null);
+                    }
                     break;
                 case '=':
-                    if(LookAhead == '=')
-                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, _position += 2, "==", null);
+                    if(LookAhead == '='){
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null);
+                    }
                     break;
                 case '!':
-                    if(LookAhead == '=')
-                        return new SyntaxToken(SyntaxKind.BangEqualsToken, _position += 2, "!=", null);
+                    if(LookAhead == '='){
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "!=", null);
+                    }
                     else
                         return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
             }
-            _diagnostics.Add($"Error: bad character input: '{Current}'");
+            _diagnostics.ReportBadCharacter(_position, Current);
             return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position-1, 1), null);
         }
     }
