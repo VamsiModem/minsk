@@ -21,11 +21,14 @@
         UnaryExpression,
         TrueKeyword,
         FalseKeyword,
-        Identifier,
+        IdentifierToken,
         BangToken,
         AmpresandAmpresandToken,
         PipePipeToken,
         EqualsEqualsToken,
-        BangEqualsToken
+        BangEqualsToken,
+        NameExpression,
+        AssignmentExpression,
+        EqualsToken
     }
 }

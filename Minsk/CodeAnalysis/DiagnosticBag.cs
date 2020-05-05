@@ -43,7 +43,13 @@ namespace Minsk.CodeAnalysis
 
         public  void ReportUndefinedBinaryOperator(TextSpan span, string operatorText, Type leftType, Type rightType)
         {
-             var message = $"Binary operator '{operatorText}' is not defined for types {leftType} and  {leftType}";
+            var message = $"Binary operator '{operatorText}' is not defined for types {leftType} and  {leftType}";
+            Report(span, message);
+        }
+
+        public void ReportUndefinedName(TextSpan span, string name)
+        {
+            var message = $"Variable with name '{name}' doesn't exist.";
             Report(span, message);
         }
     }

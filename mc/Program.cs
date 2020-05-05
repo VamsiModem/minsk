@@ -11,6 +11,7 @@ namespace Minsk
         internal static void Main(string[] args)
         {
             bool showTree = false;
+            var variables = new Dictionary<VariableSymbol, object>();
             while(true){
                 Console.Write(">");
                 var line = Console.ReadLine();
@@ -28,7 +29,7 @@ namespace Minsk
                 }
                 var syntaxTree = SyntaxTree.Parse(line);
                 var compilation = new Compilation(syntaxTree);
-                var result = compilation.Evaluate();
+                var result = compilation.Evaluate(variables);
 
                 if(showTree){
                     PrettyPrint(syntaxTree.Root);
