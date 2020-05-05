@@ -1,19 +1,19 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Minsk.Code
+namespace Minsk.CodeAnalysis.Syntax
 {
     public sealed class SyntaxToken :SyntaxNode{
-        public readonly int position;
-        public readonly string text;
-        public readonly object value;
-
+        public int Position  {get;}
+        public string Text {get;}
+        public object Value {get;}
+        public TextSpan Span => new TextSpan(Position, Text.Length);
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {
             this.Kind = kind;
-            this.position = position;
-            this.text = text;
-            this.value = value;
+            Position = position;
+            Text = text;
+            Value = value;
         }
 
         public override SyntaxKind Kind{ get;}

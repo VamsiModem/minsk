@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Minsk.Code
+namespace Minsk.CodeAnalysis.Syntax
 {
     public abstract class SyntaxNode{
         public abstract SyntaxKind Kind { get;}

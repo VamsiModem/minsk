@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Minsk.Code;
+using Minsk.CodeAnalysis;
+using Minsk.CodeAnalysis.Binding;
+using Minsk.CodeAnalysis.Syntax;
 namespace Minsk
 {
     class Program
@@ -24,22 +26,37 @@ namespace Minsk
                     Console.Clear();
                     continue;
                 }
-                var parser = new Parser(line);
-                var syntaxTree = parser.Parse();
+                var syntaxTree = SyntaxTree.Parse(line);
+                var compilation = new Compilation(syntaxTree);
+                var result = compilation.Evaluate();
+
                 if(showTree){
                     PrettyPrint(syntaxTree.Root);
                 }
-                
-                if(syntaxTree.Diags.Any()){
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    foreach(var d in parser.Diagnostics){
-                        Console.WriteLine(d);
-                    }
-                    Console.ResetColor();
+                if(!result.Diagnostics.Any()){
+                    Console.WriteLine(result.Value);
                 }else{
-                    var e = new Evaluator(syntaxTree.Root);
-                    var result = e.Evaluate();
-                    Console.WriteLine(result);
+                    Console.ForegroundColor = ConsoleColor.DarkRed;
+                    foreach(var d in result.Diagnostics){
+                        Console.WriteLine();
+
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.WriteLine(d);
+                        Console.ResetColor();
+
+                        var prefix = line.Substring(0, d.Span.Start);
+                        var error = line.Substring(d.Span.Start, d.Span.Length);
+                        var suffix = line.Substring(d.Span.End);
+                        
+                        Console.Write("   ");
+                        Console.Write(prefix);
+                        Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write(error);
+                        Console.ResetColor();
+                        Console.Write(suffix);
+                        Console.WriteLine();
+                    }
+                    Console.WriteLine();
                 }
             }
         }
@@ -49,12 +66,12 @@ namespace Minsk
             Console.Write(indent);
             Console.Write(marker);
             Console.Write(node.Kind);
-            if(node is SyntaxToken t && t.value != null){
+            if(node is SyntaxToken t && t.Value != null){
                 Console.Write(" ");
-                Console.Write(t.value);
+                Console.Write(t.Value);
             }
             Console.WriteLine();
-            indent += isLast ? "    " : "│    ";
+            indent += isLast ? "   " : "│  ";
             var children = node.GetChildren();
             var lastChild = children.LastOrDefault();
 
