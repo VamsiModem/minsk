@@ -63,7 +63,6 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 foreach(var op2 in SyntaxFacts.GetBinaryOperators())
                 {
                     yield return new object[]{op1, op2};
-                    yield break;
                 }
             }
         }
