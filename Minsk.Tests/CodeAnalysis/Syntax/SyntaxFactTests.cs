@@ -25,5 +25,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                 yield return new object[]{ kind };
             }
         }
+
+        
     }
 }

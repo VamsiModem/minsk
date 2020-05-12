@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Minsk.CodeAnalysis.Syntax
 {
@@ -43,6 +44,22 @@ namespace Minsk.CodeAnalysis.Syntax
                     return SyntaxKind.FalseKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
+            }
+        }
+
+        public static IEnumerable<SyntaxKind> GetBinaryOperators(){
+            var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
+            foreach(var kind in kinds){
+                if(GetBinaryOperatorPrecendence(kind) > 0)
+                    yield return kind;
+            }
+        }
+
+        public static IEnumerable<SyntaxKind> GetUnaryOperators(){
+            var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
+            foreach(var kind in kinds){
+                if(GetUnaryOperatorPrecendence(kind) > 0)
+                    yield return kind;
             }
         }
 
