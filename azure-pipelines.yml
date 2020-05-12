@@ -13,7 +13,7 @@ variables:
   solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-
+  tests: '.\Minsk.Tests\Minsk.Tests.csproj'
 steps:
 - task: NuGetToolInstaller@1
 - task: NuGetCommand@2
@@ -36,3 +36,5 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+- script: dotnet test $(tests)
+  displayName: 'dotner test'
