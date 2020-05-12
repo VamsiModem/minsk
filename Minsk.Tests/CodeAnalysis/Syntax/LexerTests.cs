@@ -5,7 +5,7 @@ using Minsk.CodeAnalysis.Syntax;
 using Xunit;
 
 namespace Minsk.Tests.CodeAnalysis.Syntax{
-    public class LexerTest{
+    public class LexerTests{
         [Theory]
         [MemberData(nameof(GetTokensData))]
         public void Lexer_Lexes_Token(SyntaxKind kind, string text)
@@ -55,7 +55,6 @@ namespace Minsk.Tests.CodeAnalysis.Syntax{
                 (SyntaxKind.MinusToken, "-"),
                 (SyntaxKind.StarToken, "*"),
                 (SyntaxKind.SlashToken, "/"),
-            
                 (SyntaxKind.BangToken, "!"),
                 (SyntaxKind.AmpresandAmpresandToken, "&&"),
                 (SyntaxKind.LParenToken, "("),
