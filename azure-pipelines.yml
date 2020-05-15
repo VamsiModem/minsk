@@ -32,4 +32,4 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 - script: dotnet test $(tests)
-  displayName: 'dotnet test'
+  displayName: 'Minsk.Tests'
