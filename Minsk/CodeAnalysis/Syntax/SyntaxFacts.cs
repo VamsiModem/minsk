@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Minsk.CodeAnalysis.Syntax
 {
     public static class SyntaxFacts{
-        public static int GetBinaryOperatorPrecendence(this SyntaxKind kind){
+        public static int GetBinaryOperatorPrecedence(this SyntaxKind kind){
             switch(kind){
                 
                 case SyntaxKind.StarToken:
@@ -24,7 +24,7 @@ namespace Minsk.CodeAnalysis.Syntax
                     return 0;
             }
         }
-        public static int GetUnaryOperatorPrecendence(this SyntaxKind kind){
+        public static int GetUnaryOperatorPrecedence(this SyntaxKind kind){
             switch(kind){
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
@@ -50,7 +50,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public static IEnumerable<SyntaxKind> GetBinaryOperators(){
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
             foreach(var kind in kinds){
-                if(GetBinaryOperatorPrecendence(kind) > 0)
+                if(GetBinaryOperatorPrecedence(kind) > 0)
                     yield return kind;
             }
         }
@@ -58,7 +58,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public static IEnumerable<SyntaxKind> GetUnaryOperators(){
             var kinds = (SyntaxKind[])Enum.GetValues(typeof(SyntaxKind));
             foreach(var kind in kinds){
-                if(GetUnaryOperatorPrecendence(kind) > 0)
+                if(GetUnaryOperatorPrecedence(kind) > 0)
                     yield return kind;
             }
         }

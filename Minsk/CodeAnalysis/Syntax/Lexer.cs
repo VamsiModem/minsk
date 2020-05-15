@@ -4,15 +4,17 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     internal sealed class Lexer
     {
-        public Lexer(string text)
+       
+        private readonly string _text;
+        private int _position;
+        private DiagnosticBag _diagnostics = new DiagnosticBag();
+         public Lexer(string text)
         {
             _text = text;
         }
 
-        private readonly string _text;
-        private DiagnosticBag _diagnostics = new DiagnosticBag();
+
         public DiagnosticBag Diagnostics => _diagnostics;
-        private int _position;
         private char Current => Peek(0);
         private char LookAhead => Peek(1);
         private char Peek(int offset){
@@ -74,8 +76,11 @@ namespace Minsk.CodeAnalysis.Syntax
                 case ')':
                     return new SyntaxToken(SyntaxKind.RParenToken, _position++, ")", null);
                 case '&':
-                    if(LookAhead == '&')
-                        return new SyntaxToken(SyntaxKind.AmpresandAmpresandToken, _position += 2, "&&", null);
+                    if(LookAhead == '&'){
+                        _position += 2;
+                        return new SyntaxToken(SyntaxKind.AmpresandAmpresandToken, start , "&&", null);
+                    }
+                    
                     break;
                 case '|':
                     if(LookAhead == '|'){
@@ -96,8 +101,11 @@ namespace Minsk.CodeAnalysis.Syntax
                         _position += 2;
                         return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "!=", null);
                     }
-                    else
-                        return new SyntaxToken(SyntaxKind.BangToken, _position++, "!", null);
+                    else{
+                        _position += 1;
+                        return new SyntaxToken(SyntaxKind.BangToken, start, "!", null);
+                    }
+                        
             }
             _diagnostics.ReportBadCharacter(_position, Current);
             return new SyntaxToken(SyntaxKind.BadToken, _position++, _text.Substring(_position-1, 1), null);

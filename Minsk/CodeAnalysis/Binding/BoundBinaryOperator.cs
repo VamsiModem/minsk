@@ -35,7 +35,7 @@ namespace Minsk.CodeAnalysis.Binding
 
             new BoundBinaryOperator(SyntaxKind.AmpresandAmpresandToken, BoundBinaryOperatorKind.LogicalAnd, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.PipePipeToken, BoundBinaryOperatorKind.LogicalOr, typeof(bool)),
-             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.NotEquals, typeof(bool))
         };
 

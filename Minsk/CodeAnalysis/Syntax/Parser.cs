@@ -8,6 +8,7 @@ namespace Minsk.CodeAnalysis.Syntax
         private int _position;
         private DiagnosticBag _diagnostics = new DiagnosticBag();
         public DiagnosticBag Diagnostics => _diagnostics;
+        private SyntaxToken Current => Peek(0);
         public Parser(string text)
         {
             var lexer = new Lexer(text);
@@ -35,46 +36,21 @@ namespace Minsk.CodeAnalysis.Syntax
             _position++;
             return current;
         }
-
-        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0){
-            ExpressionSyntax left;
-            var unaryOperatorPrecendence = Current.Kind.GetUnaryOperatorPrecendence();
-            if(unaryOperatorPrecendence != 0 && unaryOperatorPrecendence >= parentPrecedence){
-                var operatorToken = NextToken();
-                var operand = ParseExpression();
-                left = new UnaryExpressionSyntax(operatorToken, operand);
-            }else{
-                left = ParsePrimaryExpression();
-            }
-            while(true){
-                var precedence = Current.Kind.GetBinaryOperatorPrecendence();
-                if(precedence == 0 || precedence <= parentPrecedence)
-                    break;
-                var operatorToken = NextToken();
-                var right = ParseBinaryExpression(precedence);
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-            return left;
-        }
-
-        private ExpressionSyntax ParseExpression(){
-            return ParseAssignmentExpression();
-        }
         private SyntaxToken MatchToken(SyntaxKind kind){
             if(Current.Kind == kind)
                 return NextToken();
             _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
             return new SyntaxToken(kind, Current.Position, null, null);
         }
-        private SyntaxToken Current => Peek(0);
-    
         public SyntaxTree Parse(){
             var expr = ParseExpression();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
             return new SyntaxTree(_diagnostics, expr, eofToken);
         }
-
-        private ExpressionSyntax ParseAssignmentExpression(){
+        private ExpressionSyntax ParseExpression(){
+            return ParseAssignmentExpression();
+        }
+         private ExpressionSyntax ParseAssignmentExpression(){
             if(Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.EqualsToken){
                 var identifierToken = NextToken();
                 var operatorToken = NextToken();
@@ -82,6 +58,26 @@ namespace Minsk.CodeAnalysis.Syntax
                 return new AssignmentExpressionSyntax(identifierToken, operatorToken, right);
             }
             return ParseBinaryExpression();
+        }
+        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0){
+            ExpressionSyntax left;
+            var unaryOperatorPrecendence = Current.Kind.GetUnaryOperatorPrecedence();
+            if(unaryOperatorPrecendence != 0 && unaryOperatorPrecendence >= parentPrecedence){
+                var operatorToken = NextToken();
+                var operand = ParseBinaryExpression(unaryOperatorPrecendence);
+                left = new UnaryExpressionSyntax(operatorToken, operand);
+            }else{
+                left = ParsePrimaryExpression();
+            }
+            while(true){
+                var precedence = Current.Kind.GetBinaryOperatorPrecedence();
+                if(precedence == 0 || precedence <= parentPrecedence)
+                    break;
+                var operatorToken = NextToken();
+                var right = ParseBinaryExpression(precedence);
+                left = new BinaryExpressionSyntax(left, operatorToken, right);
+            }
+            return left;
         }
         private ExpressionSyntax ParsePrimaryExpression(){
             switch (Current.Kind)
@@ -93,7 +89,6 @@ namespace Minsk.CodeAnalysis.Syntax
                     var right = MatchToken(SyntaxKind.RParenToken);
                     return new ParenthesizedExpressionSyntax(left, expr, right);
                 }
-
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
                 {
@@ -105,7 +100,6 @@ namespace Minsk.CodeAnalysis.Syntax
                 {
                     var identifierToken = NextToken();
                     return new NameExpressionSyntax(identifierToken);
-                    
                 }
                 default:
                 {
