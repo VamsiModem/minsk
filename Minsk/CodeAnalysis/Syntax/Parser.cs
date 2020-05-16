@@ -1,12 +1,13 @@
 using System.Collections.Generic;
+using System.Collections.Immutable;
 
 namespace Minsk.CodeAnalysis.Syntax
 {
     internal sealed class Parser
     {
-        private readonly SyntaxToken[] _tokens;
+        private readonly ImmutableArray<SyntaxToken> _tokens;
         private int _position;
-        private DiagnosticBag _diagnostics = new DiagnosticBag();
+        private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         public DiagnosticBag Diagnostics => _diagnostics;
         private SyntaxToken Current => Peek(0);
         public Parser(string text)
@@ -20,7 +21,7 @@ namespace Minsk.CodeAnalysis.Syntax
                     tokens.Add(token);
                 }
             }while(token.Kind != SyntaxKind.EOFToken);
-            _tokens = tokens.ToArray();
+            _tokens = tokens.ToImmutableArray();
             _diagnostics.AddRange(lexer.Diagnostics);
         }
 
@@ -45,7 +46,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxTree Parse(){
             var expr = ParseExpression();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
-            return new SyntaxTree(_diagnostics, expr, eofToken);
+            return new SyntaxTree(_diagnostics.ToImmutableArray(), expr, eofToken);
         }
         private ExpressionSyntax ParseExpression(){
             return ParseAssignmentExpression();
@@ -83,30 +84,39 @@ namespace Minsk.CodeAnalysis.Syntax
             switch (Current.Kind)
             {
                 case SyntaxKind.LParenToken:
-                {
-                    var left = NextToken();
-                    var expr = ParseExpression();
-                    var right = MatchToken(SyntaxKind.RParenToken);
-                    return new ParenthesizedExpressionSyntax(left, expr, right);
-                }
+                    return ParseParenthesizedExpression();
                 case SyntaxKind.TrueKeyword:
                 case SyntaxKind.FalseKeyword:
-                {
-                    var keywordToken = NextToken();
-                    var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
-                    return new LiteralExpressionSyntax(keywordToken, value);
-                }
-                case SyntaxKind.IdentifierToken:
-                {
-                    var identifierToken = NextToken();
-                    return new NameExpressionSyntax(identifierToken);
-                }
+                    return ParseBooleanLiteral();
+                case SyntaxKind.NumberToken:
+                    return ParseNumberLiteral();
+                case SyntaxKind.NameExpression:
                 default:
-                {
-                    var numberToken = MatchToken(SyntaxKind.NumberToken);
-                    return new LiteralExpressionSyntax(numberToken);
-                }  
+                    return ParseNameExpression();
             }
+        }
+        private ExpressionSyntax ParseNumberLiteral()
+        {
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
+            return new LiteralExpressionSyntax(numberToken);
+        }
+        private ExpressionSyntax ParseParenthesizedExpression()
+        {
+            var left = MatchToken(SyntaxKind.LParenToken);
+            var expr = ParseExpression();
+            var right = MatchToken(SyntaxKind.RParenToken);
+            return new ParenthesizedExpressionSyntax(left, expr, right);
+        }
+        private ExpressionSyntax ParseBooleanLiteral()
+        {
+            var isTrue = Current.Kind == SyntaxKind.TrueKeyword;
+            var keywordToken = isTrue ? MatchToken(SyntaxKind.TrueKeyword) : MatchToken(SyntaxKind.FalseKeyword);
+            return new LiteralExpressionSyntax(keywordToken, isTrue);
+        }
+        private ExpressionSyntax ParseNameExpression()
+        {
+            var identifierToken = MatchToken(SyntaxKind.IdentifierToken);
+            return new NameExpressionSyntax(identifierToken);
         }
     }
 }
