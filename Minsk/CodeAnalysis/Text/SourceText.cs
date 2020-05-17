@@ -59,10 +59,10 @@ namespace Minsk.CodeAnalysis.Text
             result.Add(line);
         }
 
-        private static int GetLineBreakWidth(string text, int i)
+        private static int GetLineBreakWidth(string text, int position)
         {
-            var c = text[i];
-            var l = i >= text.Length ? '\0' : text[i];
+            var c = text[position];
+            var l = position + 1 >= text.Length ? '\0' : text[position + 1];
             if(c == '\r' && l == '\n')
                 return 2;
             if(c == '\r' && l == '\n')

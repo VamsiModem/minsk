@@ -17,17 +17,19 @@ namespace Minsk
             var variables = new Dictionary<VariableSymbol, object>();
             var textBuilder = new StringBuilder();
             while(true){
+                Console.ForegroundColor = ConsoleColor.Green;
                 if(textBuilder.Length == 0)
-                    Console.Write(">");
+                    Console.Write("» ");
                 else
-                    Console.Write("|");
-                
+                    Console.Write("· ");
+
+                Console.ResetColor();
                 
                 var input = Console.ReadLine();
                 var isBlank = string.IsNullOrWhiteSpace(input);
                 if(textBuilder.Length == 0){
                     if(isBlank){
-                        return;
+                        break;
                     }
                     else if(input.Equals("#showtree")){
                         showTree = !showTree;
@@ -42,7 +44,11 @@ namespace Minsk
                 textBuilder.AppendLine(input);
                 var text = textBuilder.ToString();
                 var syntaxTree = SyntaxTree.Parse(text);
-                if(!isBlank && syntaxTree.Diagnostics.Any()) continue;
+
+                if(!isBlank && syntaxTree.Diagnostics.Any()) 
+                    continue;
+
+
                 var compilation = new Compilation(syntaxTree);
                 var result = compilation.Evaluate(variables);
 
@@ -50,9 +56,10 @@ namespace Minsk
                     syntaxTree.Root.WriteTo(Console.Out);
                 }
                 if(!result.Diagnostics.Any()){
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);
+                    Console.ResetColor();
                 }else{
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     foreach(var d in result.Diagnostics){
                         var lineIndex = syntaxTree.Text.GetLineIndex(d.Span.Start);
                         var lineNumber = lineIndex + 1;
@@ -82,6 +89,7 @@ namespace Minsk
                     }
                     Console.WriteLine();
                 }
+                textBuilder.Clear();
             }
         }
     } 
