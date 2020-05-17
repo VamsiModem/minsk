@@ -15,12 +15,5 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxToken LParenToken { get; }
         public ExpressionSyntax Expression { get; }
         public SyntaxToken RParenToken { get; }
-
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            yield return LParenToken;
-            yield return Expression;
-            yield return RParenToken;
-        }
     }
 }
