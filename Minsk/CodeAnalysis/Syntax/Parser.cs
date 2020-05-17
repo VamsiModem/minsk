@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using Minsk.CodeAnalysis.Text;
 
 namespace Minsk.CodeAnalysis.Syntax
 {
@@ -10,7 +11,10 @@ namespace Minsk.CodeAnalysis.Syntax
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
         public DiagnosticBag Diagnostics => _diagnostics;
         private SyntaxToken Current => Peek(0);
-        public Parser(string text)
+
+        private SourceText _text;
+
+        public Parser(SourceText text)
         {
             var lexer = new Lexer(text);
             var tokens = new List<SyntaxToken>();
@@ -23,6 +27,7 @@ namespace Minsk.CodeAnalysis.Syntax
             }while(token.Kind != SyntaxKind.EOFToken);
             _tokens = tokens.ToImmutableArray();
             _diagnostics.AddRange(lexer.Diagnostics);
+            _text = text;
         }
 
         private SyntaxToken Peek(int offset){
@@ -46,7 +51,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public SyntaxTree Parse(){
             var expr = ParseExpression();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
-            return new SyntaxTree(_diagnostics.ToImmutableArray(), expr, eofToken);
+            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expr, eofToken);
         }
         private ExpressionSyntax ParseExpression(){
             return ParseAssignmentExpression();
