@@ -38,6 +38,10 @@ namespace Minsk.CodeAnalysis.Syntax
         internal static SyntaxKind GetKeyWordKind(string text)
         {
             switch(text){
+                case "let":
+                    return SyntaxKind.LetKeyword;
+                case "var":
+                    return SyntaxKind.VarKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
                 case "false":
@@ -97,6 +101,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "true";
                 case SyntaxKind.FalseKeyword: 
                     return "false";
+                case SyntaxKind.LetKeyword: 
+                    return "let";
+                case SyntaxKind.VarKeyword: 
+                    return "var";
                 default:
                     return null;
             }

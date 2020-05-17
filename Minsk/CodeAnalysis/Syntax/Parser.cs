@@ -55,9 +55,25 @@ namespace Minsk.CodeAnalysis.Syntax
             return new CompilationUnitSyntax(statement, eofToken);
         }
         private StatementSyntax ParseStatement(){
-            if(Current.Kind == SyntaxKind.LBraceToken)
-                return ParseBlockStatement();
+            switch (Current.Kind)
+            {
+                case SyntaxKind.LBraceToken:
+                    return ParseBlockStatement();
+                case SyntaxKind.LetKeyword:
+                case SyntaxKind.VarKeyword:
+                    return ParseVariableDeclaration();
+            }
             return ParseExpressionStatement(); 
+        }
+
+        private StatementSyntax ParseVariableDeclaration()
+        {
+            var expected = Current.Kind == SyntaxKind.LetKeyword ? SyntaxKind.LetKeyword : SyntaxKind.VarKeyword;
+            var keyword = MatchToken(expected);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equals = MatchToken(SyntaxKind.EqualsToken);
+            var intializer = ParseExpression();
+            return new VariableDeclarationSyntax(keyword, identifier, equals, intializer);
         }
 
         private BlockStatementSyntax ParseBlockStatement()

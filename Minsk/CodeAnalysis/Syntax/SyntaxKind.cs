@@ -34,6 +34,9 @@
         BlockStatement,
         ExpressionStatement,
         LBraceToken,
-        RBraceToken
+        RBraceToken,
+        VariableDeclaration,
+        LetKeyword,
+        VarKeyword
     }
 }
