@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using Minsk.CodeAnalysis.Text;
@@ -49,10 +50,34 @@ namespace Minsk.CodeAnalysis.Syntax
             return new SyntaxToken(kind, Current.Position, null, null);
         }
         public CompilationUnitSyntax ParseCompilationUnit(){
-            var expr = ParseExpression();
+            var statement = ParseStatement();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
-            return new CompilationUnitSyntax(expr, eofToken);
+            return new CompilationUnitSyntax(statement, eofToken);
         }
+        private StatementSyntax ParseStatement(){
+            if(Current.Kind == SyntaxKind.LBraceToken)
+                return ParseBlockStatement();
+            return ParseExpressionStatement(); 
+        }
+
+        private BlockStatementSyntax ParseBlockStatement()
+        {
+            var statements = ImmutableArray.CreateBuilder<StatementSyntax>();
+            var openBraceToken = MatchToken(SyntaxKind.LBraceToken);
+            while(Current.Kind != SyntaxKind.EOFToken && Current.Kind != SyntaxKind.RBraceToken){
+                var statement = ParseStatement();
+                statements.Add(statement);
+            }
+            var closeBraceToken = MatchToken(SyntaxKind.RBraceToken);
+            return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);
+        }
+
+        private ExpressionStatementSyntax ParseExpressionStatement()
+        {
+            var expression = ParseExpression();
+            return new ExpressionStatementSyntax(expression);
+        }
+
         private ExpressionSyntax ParseExpression(){
             return ParseAssignmentExpression();
         }

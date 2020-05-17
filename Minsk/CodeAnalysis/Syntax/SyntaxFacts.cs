@@ -81,6 +81,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "(";
                 case SyntaxKind.RParenToken: 
                     return ")";
+                case SyntaxKind.LBraceToken: 
+                    return "{";
+                case SyntaxKind.RBraceToken: 
+                    return "}";
                 case SyntaxKind.PipePipeToken: 
                     return "||";
                 case SyntaxKind.EqualsEqualsToken: 

@@ -30,6 +30,10 @@
         NameExpression,
         AssignmentExpression,
         EqualsToken,
-        CompilationUnit
+        CompilationUnit,
+        BlockStatement,
+        ExpressionStatement,
+        LBraceToken,
+        RBraceToken
     }
 }

@@ -2,13 +2,16 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     public sealed class CompilationUnitSyntax : SyntaxNode
     {
-        public CompilationUnitSyntax(ExpressionSyntax expression, SyntaxToken eofToken)
+        public CompilationUnitSyntax(StatementSyntax statement, SyntaxToken eofToken)
         {
-            Expression = expression;
+            Statement = statement;
             EofToken = eofToken;
         }
         public override SyntaxKind Kind => SyntaxKind.CompilationUnit;
-        public ExpressionSyntax Expression { get; }
+        public StatementSyntax Statement { get; }
         public SyntaxToken EofToken { get; }
     }
 }
+        
+    
+    

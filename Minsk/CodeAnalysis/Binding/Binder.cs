@@ -1,21 +1,76 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using Minsk.CodeAnalysis.Syntax;
 
 namespace Minsk.CodeAnalysis.Binding
 {
-
     internal sealed class Binder{
-        public Binder(Dictionary<VariableSymbol, object> variables)
+        public Binder(BoundScope parent)
         {
-            _variables = variables;
+            _scope = new BoundScope(parent);
         }
         private readonly DiagnosticBag _diagnostics = new DiagnosticBag();
-        private readonly Dictionary<VariableSymbol, object> _variables;
-
+        private readonly BoundScope _scope;
         public DiagnosticBag Diagnostics => _diagnostics;
-        public BoundExpression BindExpression(ExpressionSyntax syntax){
+        private static BoundScope CreateParentScopes(BoundGlobalScope previous){
+            var stack = new Stack<BoundGlobalScope>();
+            while(previous != null){
+                stack.Push(previous);
+                previous = previous.Previous;
+            }
+            BoundScope parent = null;
+            while(stack.Count > 0){
+                previous = stack.Pop();
+                var scope = new BoundScope(parent);
+                foreach(var v in previous.Variables)
+                    scope.TryDeclare(v);
+                parent = scope;
+            }
+            return parent;
+        }
+
+        public static BoundGlobalScope BindGlobalScope(BoundGlobalScope previous, CompilationUnitSyntax syntax){
+            var parent = CreateParentScopes(previous);
+            var binder = new Binder(parent);
+            var expression = binder.BindStatement(syntax.Statement);
+            var variables = binder._scope.GetDeclaredVariables();
+            var diagnostics = binder.Diagnostics.ToImmutableArray();
+            if(previous != null){
+                diagnostics = diagnostics.InsertRange(0, previous.Diagnostics);
+            }
+            return new BoundGlobalScope(previous, diagnostics, variables, expression);
+        }
+        private BoundStatement BindStatement(StatementSyntax syntax){
+            switch(syntax.Kind){
+                case SyntaxKind.BlockStatement:
+                    return BindBlockStatement((BlockStatementSyntax)syntax);
+                case SyntaxKind.ExpressionStatement:
+                    return BindExpressionStatement(((ExpressionStatementSyntax)syntax));
+                default:
+                    throw new Exception($"Unexpected syntax {syntax.Kind}");
+            }
+        }
+
+        private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
+        {
+           var expression = BindExpression(syntax.Expression);
+           return new BoundExpressionStatement(expression);
+        }
+
+        private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
+        {
+            var statements = ImmutableArray.CreateBuilder<BoundStatement>();
+            foreach(var statementSyntax in syntax.Statements){
+                var statement = BindStatement(statementSyntax);
+                statements.Add(statement);
+            }
+            return new BoundBlockStatement(statements.ToImmutable());
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax){
             switch(syntax.Kind){
                 case SyntaxKind.LiteralExpression:
                     return BindLiteralExpression((LiteralExpressionSyntax)syntax);
@@ -41,21 +96,22 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
-            var exisitingVariable = _variables.Keys.FirstOrDefault(v => v.Name == name);
-            if(exisitingVariable != null){
-                _variables.Remove(exisitingVariable);
+            if(!_scope.TryLookup(name, out var variable)){
+                variable = new VariableSymbol(name, boundExpression.Type);
+                _scope.TryDeclare(variable);
             }
-            var variable = new VariableSymbol(name, boundExpression.Type);
-            _variables[variable] = null;
-
+            if(boundExpression.Type != variable.Type){
+                _diagnostics.ReportCannotConvert(syntax.Expression.Span, boundExpression.Type, variable.Type);
+                return boundExpression;
+            }
+           
             return new BoundAssignmentExpression(variable, boundExpression);
         }
 
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             var name = syntax.IdentifierToken.Text;
-            var variable = _variables.Keys.FirstOrDefault(v => v.Name == name);
-            if(variable is null){
+            if(!_scope.TryLookup(name, out var variable)){
                 _diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return new BoundLiteralExpression(0);
             }

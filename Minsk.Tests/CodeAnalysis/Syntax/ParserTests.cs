@@ -13,7 +13,7 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
             var op1Text = SyntaxFacts.GetText(op1);
             var op2Text = SyntaxFacts.GetText(op2);
             var text = $"a {op1Text} b {op2Text} c";
-            var expression = SyntaxTree.Parse(text).Root;
+            var expression = ParseExpression(text);
             if(op1Precedence >= op2Precedence){
                 //       op2
                 //      /  \
@@ -59,13 +59,14 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
 
         [Theory]
         [MemberData(nameof(GetUnaryOperatorPairsData))]
-        public void Parser_UnaryExpression_HonorsPrecedences(SyntaxKind unaryKind, SyntaxKind binaryKind){
+        public void Parser_UnaryExpression_HonorsPrecedences(SyntaxKind unaryKind, SyntaxKind binaryKind)
+        {
             var unaryPrecedence = SyntaxFacts.GetUnaryOperatorPrecedence(unaryKind);
             var binaryPrecedence = SyntaxFacts.GetBinaryOperatorPrecedence(binaryKind);
             var unaryText = SyntaxFacts.GetText(unaryKind);
             var binaryText = SyntaxFacts.GetText(binaryKind);
             var text = $"{unaryText} a {binaryText} b";
-            var expression = SyntaxTree.Parse(text).Root;
+            ExpressionSyntax expression = ParseExpression(text);
             if (unaryPrecedence >= binaryPrecedence)
             {
                 //   binary
@@ -102,10 +103,19 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
                     e.AssertNode(SyntaxKind.NameExpression);
                     e.AssertToken(SyntaxKind.IdentifierToken, "a");
                     e.AssertToken(binaryKind, binaryText);
-                    e.AssertNode(SyntaxKind.NameExpression);                    
+                    e.AssertNode(SyntaxKind.NameExpression);
                     e.AssertToken(SyntaxKind.IdentifierToken, "b");
                 }
             }
+        }
+
+        private static ExpressionSyntax ParseExpression(string text)
+        {
+            var syntaxTree = SyntaxTree.Parse(text);
+            var root = syntaxTree.Root;
+            var statement = root.Statement;
+
+            return Assert.IsType<ExpressionStatementSyntax>(statement).Expression;
         }
 
         public static IEnumerable<object[]> GetBinaryOperatorPairsData(){

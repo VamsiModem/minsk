@@ -62,6 +62,14 @@ namespace Minsk.CodeAnalysis.Syntax
                     _kind = SyntaxKind.RParenToken;
                     _position++;
                     break;
+                case '{':
+                    _kind = SyntaxKind.LBraceToken;
+                    _position++;
+                    break;
+                case '}':
+                    _kind = SyntaxKind.RBraceToken;
+                    _position++;
+                    break;
                 case '&':
                     if(LookAhead == '&'){
                         _position += 2;
