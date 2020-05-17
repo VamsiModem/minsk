@@ -48,10 +48,10 @@ namespace Minsk.CodeAnalysis.Syntax
             _diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
             return new SyntaxToken(kind, Current.Position, null, null);
         }
-        public SyntaxTree Parse(){
+        public CompilationUnitSyntax ParseCompilationUnit(){
             var expr = ParseExpression();
             var eofToken = MatchToken(SyntaxKind.EOFToken);
-            return new SyntaxTree(_text, _diagnostics.ToImmutableArray(), expr, eofToken);
+            return new CompilationUnitSyntax(expr, eofToken);
         }
         private ExpressionSyntax ParseExpression(){
             return ParseAssignmentExpression();

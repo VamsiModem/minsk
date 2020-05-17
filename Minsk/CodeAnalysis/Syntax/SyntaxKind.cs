@@ -29,6 +29,7 @@
         BangEqualsToken,
         NameExpression,
         AssignmentExpression,
-        EqualsToken
+        EqualsToken,
+        CompilationUnit
     }
 }
