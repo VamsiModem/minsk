@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Minsk.CodeAnalysis;
 using Minsk.CodeAnalysis.Binding;
 using Minsk.CodeAnalysis.Syntax;
+using Minsk.CodeAnalysis.Text;
+
 namespace Minsk
 {
     class Program
@@ -12,46 +15,78 @@ namespace Minsk
         {
             bool showTree = false;
             var variables = new Dictionary<VariableSymbol, object>();
+            var textBuilder = new StringBuilder();
+            Compilation previous = null;
             while(true){
-                Console.Write(">");
-                var line = Console.ReadLine();
-                if(string.IsNullOrWhiteSpace(line)){
-                    return;
-                }
+                Console.ForegroundColor = ConsoleColor.Green;
+                if(textBuilder.Length == 0)
+                    Console.Write("» ");
+                else
+                    Console.Write("· ");
 
-                if(line.Equals("#showtree")){
-                    showTree = !showTree;
-                    Console.WriteLine(showTree ? "Showing parse trees.": "Not showing parse trees.");
-                    continue;
-                }else if (line.Equals("#cls")){
-                    Console.Clear();
-                    continue;
+                Console.ResetColor();
+                
+                var input = Console.ReadLine();
+                var isBlank = string.IsNullOrWhiteSpace(input);
+                if(textBuilder.Length == 0){
+                    if(isBlank){
+                        break;
+                    }
+                    else if(input.Equals("#showtree")){
+                        showTree = !showTree;
+                        Console.WriteLine(showTree ? "Showing parse trees.": "Not showing parse trees.");
+                        continue;
+                    }else if (input.Equals("#cls")){
+                        Console.Clear();
+                        continue;
+                    }else if (input.Equals("#reset")){
+                        previous = null;
+                        continue;
+                    }
+                    
                 }
-                var syntaxTree = SyntaxTree.Parse(line);
-                var compilation = new Compilation(syntaxTree);
+                textBuilder.AppendLine(input);
+                var text = textBuilder.ToString();
+                var syntaxTree = SyntaxTree.Parse(text);
+
+                if(!isBlank && syntaxTree.Diagnostics.Any()) 
+                    continue;
+
+
+                var compilation = previous is null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
                 var result = compilation.Evaluate(variables);
 
                 if(showTree){
-                    PrettyPrint(syntaxTree.Root);
+                    syntaxTree.Root.WriteTo(Console.Out);
                 }
                 if(!result.Diagnostics.Any()){
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);
+                    Console.ResetColor();
+                    previous = compilation;
                 }else{
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
                     foreach(var d in result.Diagnostics){
+                        var lineIndex = syntaxTree.Text.GetLineIndex(d.Span.Start);
+                        var lineNumber = lineIndex + 1;
+                        var line = syntaxTree.Text.Lines[lineIndex];
+                        var character = d.Span.Start - line.Start + 1;
                         Console.WriteLine();
 
                         Console.ForegroundColor = ConsoleColor.DarkRed;
+                        Console.Write($"({lineNumber}, {character}): ");
                         Console.WriteLine(d);
                         Console.ResetColor();
 
-                        var prefix = line.Substring(0, d.Span.Start);
-                        var error = line.Substring(d.Span.Start, d.Span.Length);
-                        var suffix = line.Substring(d.Span.End);
+                        var prefixSpan = TextSpan.FromBounds(line.Start, d.Span.Start);
+                        var suffixSpan = TextSpan.FromBounds(d.Span.End, line.End);
+                        var prefix = syntaxTree.Text.ToString(prefixSpan);
+                        var error = syntaxTree.Text.ToString(d.Span);
+                        var suffix = syntaxTree.Text.ToString(suffixSpan);
                         
                         Console.Write("   ");
                         Console.Write(prefix);
                         Console.ForegroundColor = ConsoleColor.DarkRed;
+                        
                         Console.Write(error);
                         Console.ResetColor();
                         Console.Write(suffix);
@@ -59,28 +94,8 @@ namespace Minsk
                     }
                     Console.WriteLine();
                 }
+                textBuilder.Clear();
             }
         }
-
-        static void PrettyPrint(SyntaxNode node, string indent = "", bool isLast = true){
-            var marker = isLast ? "└──" : "├──";
-            Console.Write(indent);
-            Console.Write(marker);
-            Console.Write(node.Kind);
-            if(node is SyntaxToken t && t.Value != null){
-                Console.Write(" ");
-                Console.Write(t.Value);
-            }
-            Console.WriteLine();
-            indent += isLast ? "   " : "│  ";
-            var children = node.GetChildren();
-            var lastChild = children.LastOrDefault();
-
-            foreach(var child in children){
-                PrettyPrint(child, indent, child == lastChild);
-            }
-        }
-    }
-    
-    
+    } 
 }

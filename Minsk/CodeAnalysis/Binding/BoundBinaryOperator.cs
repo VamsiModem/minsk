@@ -31,12 +31,12 @@ namespace Minsk.CodeAnalysis.Binding
             new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.Multiplication, typeof(int)),
 
             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(int), typeof(bool)),
-            new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.NotEquals, typeof(int), typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(int), typeof(bool)),
 
             new BoundBinaryOperator(SyntaxKind.AmpresandAmpresandToken, BoundBinaryOperatorKind.LogicalAnd, typeof(bool)),
             new BoundBinaryOperator(SyntaxKind.PipePipeToken, BoundBinaryOperatorKind.LogicalOr, typeof(bool)),
-             new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
-            new BoundBinaryOperator(SyntaxKind.StarToken, BoundBinaryOperatorKind.NotEquals, typeof(bool))
+            new BoundBinaryOperator(SyntaxKind.EqualsEqualsToken, BoundBinaryOperatorKind.Equals, typeof(bool)),
+            new BoundBinaryOperator(SyntaxKind.BangEqualsToken, BoundBinaryOperatorKind.NotEquals, typeof(bool))
         };
 
         public static BoundBinaryOperator Bind(SyntaxKind kind, Type leftType, Type rightType){

@@ -29,6 +29,14 @@
         BangEqualsToken,
         NameExpression,
         AssignmentExpression,
-        EqualsToken
+        EqualsToken,
+        CompilationUnit,
+        BlockStatement,
+        ExpressionStatement,
+        LBraceToken,
+        RBraceToken,
+        VariableDeclaration,
+        LetKeyword,
+        VarKeyword
     }
 }

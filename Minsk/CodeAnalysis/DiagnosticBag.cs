@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Minsk.CodeAnalysis.Syntax;
+using Minsk.CodeAnalysis.Text;
 
 namespace Minsk.CodeAnalysis
 {
@@ -50,6 +51,24 @@ namespace Minsk.CodeAnalysis
         public void ReportUndefinedName(TextSpan span, string name)
         {
             var message = $"Variable with name '{name}' doesn't exist.";
+            Report(span, message);
+        }
+
+        internal void ReportVariableAlreadyDeclared(TextSpan span, string name)
+        {
+            var message = $"Variable '{name}' is already declared.";
+            Report(span, message);
+        }
+
+        internal void ReportCannotConvert(TextSpan span, Type fromType, Type toType)
+        {
+            var message = $"Cannot convert type '{fromType}' to '{toType}'.";
+            Report(span, message);
+        }
+
+        internal void ReportCannotAssign(TextSpan span, string name)
+        {
+            var message = $"Variable '{name}' is readonly and cannot be assigned to.";
             Report(span, message);
         }
     }
