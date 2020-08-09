@@ -15,6 +15,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return 4;
                 case SyntaxKind.EqualsEqualsToken:
                 case SyntaxKind.BangEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualsToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
                 case SyntaxKind.AmpresandAmpresandToken:
                     return 2;
@@ -38,14 +42,25 @@ namespace Minsk.CodeAnalysis.Syntax
         internal static SyntaxKind GetKeyWordKind(string text)
         {
             switch(text){
+                case "false":
+                    return SyntaxKind.FalseKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
+                case "if":
+                    return SyntaxKind.IfKeyword;
+                case "for":
+                    return SyntaxKind.ForKeyword;
                 case "let":
                     return SyntaxKind.LetKeyword;
                 case "var":
                     return SyntaxKind.VarKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
-                case "false":
-                    return SyntaxKind.FalseKeyword;
+                case "while":
+                    return SyntaxKind.WhileKeyword;
+                case "to":
+                    return SyntaxKind.ToKeyword;
+                
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -97,14 +112,32 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "!=";
                 case SyntaxKind.EqualsToken: 
                     return "=" ;
+                case SyntaxKind.LessToken: 
+                    return "<" ;
+                case SyntaxKind.LessOrEqualsToken: 
+                    return "<=" ;
+                case SyntaxKind.GreaterToken: 
+                    return ">" ;
+                case SyntaxKind.GreaterOrEqualsToken: 
+                    return ">=" ;
+                case SyntaxKind.ElseKeyword: 
+                    return "else";
                 case SyntaxKind.TrueKeyword: 
                     return "true";
+                case SyntaxKind.IfKeyword: 
+                    return "if";
                 case SyntaxKind.FalseKeyword: 
                     return "false";
                 case SyntaxKind.LetKeyword: 
                     return "let";
+                case SyntaxKind.WhileKeyword: 
+                    return "while";
                 case SyntaxKind.VarKeyword: 
                     return "var";
+                 case SyntaxKind.ForKeyword: 
+                    return "for";
+                case SyntaxKind.ToKeyword: 
+                    return "to";
                 default:
                     return null;
             }

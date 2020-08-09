@@ -37,6 +37,19 @@
         RBraceToken,
         VariableDeclaration,
         LetKeyword,
-        VarKeyword
+        VarKeyword,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
+        LessToken,
+        IfStatement,
+        ElseKeyword,
+        IfKeyword,
+
+        WhileKeyword,
+        WhileStatement,
+        ForKeyword,
+        ForStatement,
+        ToKeyword
     }
 }

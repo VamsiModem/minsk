@@ -93,8 +93,25 @@ namespace Minsk.CodeAnalysis.Syntax
                         _position ++;
                         _kind = _kind = SyntaxKind.EqualsEqualsToken;
                     }
-                        
-                    break;                    
+                    break;   
+                case '<':
+                    _position++;
+                    if(Current != '='){
+                        _kind = _kind = SyntaxKind.LessToken;
+                    }else{
+                        _position ++;
+                        _kind = _kind = SyntaxKind.LessOrEqualsToken;
+                    }
+                    break;   
+                case '>':
+                    _position++;
+                    if(Current != '='){
+                        _kind = _kind = SyntaxKind.GreaterToken;
+                    }else{
+                        _position ++;
+                        _kind = _kind = SyntaxKind.GreaterOrEqualsToken;
+                    }
+                    break;             
                 case '!':
                     _position++;
                     if(Current != '='){
