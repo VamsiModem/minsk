@@ -70,19 +70,33 @@ namespace Minsk.CodeAnalysis.Syntax
                     _kind = SyntaxKind.RBraceToken;
                     _position++;
                     break;
+                 case '~':
+                    _kind = SyntaxKind.TildeToken;
+                    _position++;
+                    break;
+                 case '^':
+                    _kind = SyntaxKind.HatToken;
+                    _position++;
+                    break;
                 case '&':
-                    if(LookAhead == '&'){
-                        _position += 2;
-                        _kind = SyntaxKind.AmpresandAmpresandToken;
-                        break;
+                    _position++;
+                    if(Current != '&'){
+                        _kind = SyntaxKind.AmpersandToken;
+                    }
+                    else{
+                        _kind = SyntaxKind.AmpersandAmpersandToken;
+                         _position++;;
                     }
                     
                     break;
                 case '|':
-                    if(LookAhead == '|'){
-                        _position += 2;
+                _position++;
+                    if(Current != '|'){
+                        _kind = SyntaxKind.PipeToken;
+                    }
+                    else{
                         _kind = SyntaxKind.PipePipeToken;
-                        break;
+                         _position++;;
                     }
                     break;
                 case '=':
