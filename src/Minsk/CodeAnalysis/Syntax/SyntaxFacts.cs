@@ -15,6 +15,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return 4;
                 case SyntaxKind.EqualsEqualsToken:
                 case SyntaxKind.BangEqualsToken:
+                case SyntaxKind.LessToken:
+                case SyntaxKind.LessOrEqualsToken:
+                case SyntaxKind.GreaterToken:
+                case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
                 case SyntaxKind.AmpresandAmpresandToken:
                     return 2;
@@ -97,6 +101,14 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "!=";
                 case SyntaxKind.EqualsToken: 
                     return "=" ;
+                case SyntaxKind.LessToken: 
+                    return "<" ;
+                case SyntaxKind.LessOrEqualsToken: 
+                    return "<=" ;
+                case SyntaxKind.GreaterToken: 
+                    return ">" ;
+                case SyntaxKind.GreaterOrEqualsToken: 
+                    return ">=" ;
                 case SyntaxKind.TrueKeyword: 
                     return "true";
                 case SyntaxKind.FalseKeyword: 

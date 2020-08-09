@@ -9,6 +9,10 @@ namespace Minsk.CodeAnalysis.Binding
         LogicalOr,
         LogicalAnd,
         Equals,
-        NotEquals
+        NotEquals,
+        Less,
+        LessOrEquals,
+        Greater,
+        GreaterOrEquals
     }
 }
