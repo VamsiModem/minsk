@@ -42,14 +42,19 @@ namespace Minsk.CodeAnalysis.Syntax
         internal static SyntaxKind GetKeyWordKind(string text)
         {
             switch(text){
+                case "false":
+                    return SyntaxKind.FalseKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
+                case "if":
+                    return SyntaxKind.IfKeyword;
                 case "let":
                     return SyntaxKind.LetKeyword;
                 case "var":
                     return SyntaxKind.VarKeyword;
                 case "true":
                     return SyntaxKind.TrueKeyword;
-                case "false":
-                    return SyntaxKind.FalseKeyword;
+                
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -109,8 +114,12 @@ namespace Minsk.CodeAnalysis.Syntax
                     return ">" ;
                 case SyntaxKind.GreaterOrEqualsToken: 
                     return ">=" ;
+                case SyntaxKind.ElseKeyword: 
+                    return "else";
                 case SyntaxKind.TrueKeyword: 
                     return "true";
+                case SyntaxKind.IfKeyword: 
+                    return "if";
                 case SyntaxKind.FalseKeyword: 
                     return "false";
                 case SyntaxKind.LetKeyword: 

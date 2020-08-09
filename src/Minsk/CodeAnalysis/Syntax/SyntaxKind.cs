@@ -41,6 +41,10 @@
         LessOrEqualsToken,
         GreaterToken,
         GreaterOrEqualsToken,
-        LessToken
+        LessToken,
+        IfStatement,
+        ElseKeyword,
+        IfKeyword
+        
     }
 }
