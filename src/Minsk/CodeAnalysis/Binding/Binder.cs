@@ -60,7 +60,7 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var expression = BindExpression(syntax.Initializer);
             var name = syntax.Identifier.Text;
-            var isReadOnly = syntax.Kind == SyntaxKind.LetKeyword;
+            var isReadOnly = syntax.Keyword.Kind == SyntaxKind.LetKeyword;
             var initializer = BindExpression(syntax.Initializer);
             var variable = new VariableSymbol(name, isReadOnly, initializer.Type);
             if(!_scope.TryDeclare(variable)){

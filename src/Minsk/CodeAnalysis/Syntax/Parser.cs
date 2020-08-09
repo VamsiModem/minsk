@@ -62,8 +62,9 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.LetKeyword:
                 case SyntaxKind.VarKeyword:
                     return ParseVariableDeclaration();
+                default:
+                    return ParseExpressionStatement(); 
             }
-            return ParseExpressionStatement(); 
         }
 
         private StatementSyntax ParseVariableDeclaration()
@@ -101,7 +102,7 @@ namespace Minsk.CodeAnalysis.Syntax
             if(Peek(0).Kind == SyntaxKind.IdentifierToken && Peek(1).Kind == SyntaxKind.EqualsToken){
                 var identifierToken = NextToken();
                 var operatorToken = NextToken();
-                var right =ParseAssignmentExpression();
+                var right = ParseAssignmentExpression();
                 return new AssignmentExpressionSyntax(identifierToken, operatorToken, right);
             }
             return ParseBinaryExpression();
