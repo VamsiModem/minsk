@@ -108,6 +108,100 @@ namespace Minsk.Tests.CodeAnalysis
 
             AssertDiagnostics(text, diagnostics);
         }
+
+         [Fact]
+        public void Evaluator_IfStatement_Reports_CannotConvert(){
+            var text = @"
+            {
+                var x = 0
+                if [10]
+                    x = 10
+            }";
+            
+            var diagnostics = @"
+                Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_whileStatement_Reports_CannotConvert(){
+            var text = @"
+            {
+                var x = 0
+                while [10]
+                    x = 10
+            }";
+            
+            var diagnostics = @"
+                Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+        [Fact]
+        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound(){
+            var text = @"
+            {
+                var x = 0
+                for i = [false] to 10
+                {
+                    x = x + 10
+                }  
+            }";
+            
+            var diagnostics = @"
+                Cannot convert type 'System.Boolean' to 'System.Int32'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound(){
+            var text = @"
+            {
+                var x = 0
+                for i = 0 to [true]
+                {
+                    x = x + 10
+                }  
+            }";
+            
+            var diagnostics = @"
+                Cannot convert type 'System.Boolean' to 'System.Int32'.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Fact]
+        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken(){
+            var text = @"[]";
+            
+            var diagnostics = @"
+                Unexpected token <EOFToken>, expected <IdentifierToken>
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+
+        [Fact]
+        public void Evaluator_BlockStatement_NoInfiniteLoop(){
+            var text = @"
+            {
+                
+            [)][]";
+            
+            var diagnostics = @"
+                Unexpected token <RParenToken>, expected <IdentifierToken>
+                Unexpected token <EOFToken>, expected <RBraceToken>
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
         private void AssertDiagnostics(string text, string diagnosticText){
             var annotatedText = AnnotatedText.Parse(text);
             var syntaxTree = SyntaxTree.Parse(annotatedText.Text);

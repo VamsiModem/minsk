@@ -126,8 +126,12 @@ namespace Minsk.CodeAnalysis.Syntax
             var statements = ImmutableArray.CreateBuilder<StatementSyntax>();
             var openBraceToken = MatchToken(SyntaxKind.LBraceToken);
             while(Current.Kind != SyntaxKind.EOFToken && Current.Kind != SyntaxKind.RBraceToken){
+                var startToken = Current;
                 var statement = ParseStatement();
                 statements.Add(statement);
+                if(Current == startToken){
+                    NextToken();
+                }
             }
             var closeBraceToken = MatchToken(SyntaxKind.RBraceToken);
             return new BlockStatementSyntax(openBraceToken, statements.ToImmutable(), closeBraceToken);
