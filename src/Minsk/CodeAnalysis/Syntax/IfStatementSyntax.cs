@@ -5,7 +5,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public override SyntaxKind Kind => SyntaxKind.IfStatement;
 
         public SyntaxToken IfKeyword { get; }
-        public ExpressionSyntax Contition { get; }
+        public ExpressionSyntax Condition { get; }
         public StatementSyntax ThenStatement { get; }
         public ElseClauseSyntax ElseClauseSyntax { get; }
 
@@ -13,7 +13,7 @@ namespace Minsk.CodeAnalysis.Syntax
                                 StatementSyntax thenStatement, ElseClauseSyntax elseClauseSyntax)
         {
             IfKeyword = ifKeyword;
-            Contition = contition;
+            Condition = contition;
             ThenStatement = thenStatement;
             ElseClauseSyntax = elseClauseSyntax;
         }

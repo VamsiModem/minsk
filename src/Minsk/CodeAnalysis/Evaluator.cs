@@ -31,12 +31,35 @@ namespace Minsk.CodeAnalysis
                 case BoundNodeKind.IfStatement:
                     EvaluateIfStatement((BoundIfStatement)node);
                     break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluatewhileStatement((BoundWhileStatement)node);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)node);
+                    break;
+                case BoundNodeKind.ForStatement:
+                    EvaluateForStatement((BoundForStatement)node);
                     break;
                 default:
                     throw new Exception($"Unexpected node {node.Kind}");
             }
+        }
+
+        private void EvaluateForStatement(BoundForStatement node)
+        {
+            var lowerBound = (int)EvaluateExpression(node.LowerBound);
+            var upperBound = (int)EvaluateExpression(node.UpperBound);
+            for(var i = lowerBound; i <= upperBound; i++){
+                 _variables[node.Variable] = i;
+                 EvaluateStatement(node.Body);
+            }
+           
+        }
+
+        private void EvaluatewhileStatement(BoundWhileStatement node)
+        {
+            while((bool)EvaluateExpression(node.Condition))
+                EvaluateStatement(node.Body);
         }
 
         private void EvaluateIfStatement(BoundIfStatement node)

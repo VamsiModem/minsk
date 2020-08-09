@@ -44,7 +44,12 @@
         LessToken,
         IfStatement,
         ElseKeyword,
-        IfKeyword
-        
+        IfKeyword,
+
+        WhileKeyword,
+        WhileStatement,
+        ForKeyword,
+        ForStatement,
+        ToKeyword
     }
 }
