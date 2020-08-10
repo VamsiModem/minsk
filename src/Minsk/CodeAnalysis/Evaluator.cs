@@ -123,6 +123,18 @@ namespace Minsk.CodeAnalysis
                     return (int)left * (int)right;
                 case BoundBinaryOperatorKind.Division:
                     return (int)left / (int)right;
+                case BoundBinaryOperatorKind.BitwiseAnd:
+                    if(b.Type == typeof(int))
+                        return (int)left & (int)right;
+                    else return (bool)left & (bool)right;
+                 case BoundBinaryOperatorKind.BitwiseOr:
+                    if(b.Type == typeof(int))
+                        return (int)left | (int)right;
+                    else return (bool)left | (bool)right;
+                case BoundBinaryOperatorKind.BitwiseXOr:
+                    if(b.Type == typeof(int))
+                        return (int)left ^ (int)right;
+                    else return (bool)left ^ (bool)right;
                 case BoundBinaryOperatorKind.LogicalAnd:
                     return (bool)left && (bool)right;
                 case BoundBinaryOperatorKind.LogicalOr:
@@ -155,6 +167,8 @@ namespace Minsk.CodeAnalysis
                     return -(int)operand;
                 case BoundUnaryOperatorKind.LogicalNegation:
                     return !(bool)operand;
+                case BoundUnaryOperatorKind.OnesComplement:
+                    return ~(int)operand;
                 default:
                     throw new Exception($"Unexpected binary operator {u.Op.Kind}");
             }

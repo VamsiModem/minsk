@@ -20,9 +20,12 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.GreaterToken:
                 case SyntaxKind.GreaterOrEqualsToken:
                     return 3;
-                case SyntaxKind.AmpresandAmpresandToken:
+                case SyntaxKind.AmpersandAmpersandToken:
+                case SyntaxKind.AmpersandToken:
                     return 2;
                 case SyntaxKind.PipePipeToken:
+                case SyntaxKind.PipeToken:
+                case SyntaxKind.HatToken:
                     return 1;
                 default:
                     return 0;
@@ -33,6 +36,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 case SyntaxKind.PlusToken:
                 case SyntaxKind.MinusToken:
                 case SyntaxKind.BangToken:
+                case SyntaxKind.TildeToken:
                     return 6;
                 default:
                     return 0;
@@ -94,7 +98,9 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "/";
                 case SyntaxKind.BangToken: 
                     return "!";
-                case SyntaxKind.AmpresandAmpresandToken: 
+                 case SyntaxKind.AmpersandToken: 
+                    return "&";
+                case SyntaxKind.AmpersandAmpersandToken: 
                     return "&&";
                 case SyntaxKind.LParenToken: 
                     return "(";
@@ -104,14 +110,20 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "{";
                 case SyntaxKind.RBraceToken: 
                     return "}";
+                case SyntaxKind.PipeToken: 
+                    return "|";
                 case SyntaxKind.PipePipeToken: 
                     return "||";
+                case SyntaxKind.HatToken: 
+                    return "^";
                 case SyntaxKind.EqualsEqualsToken: 
                     return "==";
                 case SyntaxKind.BangEqualsToken: 
                     return "!=";
                 case SyntaxKind.EqualsToken: 
                     return "=" ;
+                case SyntaxKind.TildeToken: 
+                    return "~";
                 case SyntaxKind.LessToken: 
                     return "<" ;
                 case SyntaxKind.LessOrEqualsToken: 
@@ -138,6 +150,7 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "for";
                 case SyntaxKind.ToKeyword: 
                     return "to";
+                
                 default:
                     return null;
             }
