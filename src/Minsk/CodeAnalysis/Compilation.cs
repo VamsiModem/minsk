@@ -9,18 +9,24 @@ using Minsk.CodeAnalysis.Lowering;
 using Minsk.CodeAnalysis.Syntax;
 namespace Minsk.CodeAnalysis
 {
-    public sealed class Compilation{
+    public sealed class Compilation
+    {
         private BoundGlobalScope _globalScope;
-        public Compilation(SyntaxTree syntaxTree):this(null, syntaxTree){
+        public Compilation(SyntaxTree syntaxTree) : this(null, syntaxTree)
+        {
             SyntaxTree = syntaxTree;
         }
-        private Compilation (Compilation previous, SyntaxTree syntaxTree){
+        private Compilation(Compilation previous, SyntaxTree syntaxTree)
+        {
             Previous = previous;
             SyntaxTree = syntaxTree;
         }
-        internal BoundGlobalScope GlobalScope{
-            get{
-                if(_globalScope is null){
+        internal BoundGlobalScope GlobalScope
+        {
+            get
+            {
+                if (_globalScope is null)
+                {
                     var globalScope = Binder.BindGlobalScope(Previous?.GlobalScope, SyntaxTree.Root);
                     Interlocked.CompareExchange(ref _globalScope, globalScope, null);
                 }
@@ -30,14 +36,17 @@ namespace Minsk.CodeAnalysis
         public SyntaxTree SyntaxTree { get; }
         public Compilation Previous { get; }
 
-        public Compilation ContinueWith(SyntaxTree syntaxTree){
+        public Compilation ContinueWith(SyntaxTree syntaxTree)
+        {
             return new Compilation(this, syntaxTree);
         }
-        public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables){
+        public EvaluationResult Evaluate(Dictionary<VariableSymbol, object> variables)
+        {
 
 
             var diagnostics = SyntaxTree.Diagnostics.Concat(GlobalScope.Diagnostics).ToImmutableArray();
-            if(diagnostics.Any()){
+            if (diagnostics.Any())
+            {
                 return new EvaluationResult(diagnostics, null);
             }
             var statement = GetStatement();
@@ -52,7 +61,7 @@ namespace Minsk.CodeAnalysis
             GlobalScope.Statement.WriteTo(writer);
         }
 
-        private BoundStatement GetStatement()
+        private BoundBlockStatement GetStatement()
         {
             var result = GlobalScope.Statement;
             return Lowerer.Lower(result);

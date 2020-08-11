@@ -2,7 +2,8 @@ using System;
 
 namespace Minsk.CodeAnalysis
 {
-    public sealed class VariableSymbol{
+    public sealed class VariableSymbol
+    {
         public VariableSymbol(string name, bool isReadOnly, Type type)
         {
             Name = name;
@@ -13,5 +14,6 @@ namespace Minsk.CodeAnalysis
         public string Name { get; }
         public bool IsReadOnly { get; }
         public Type Type { get; }
+        public override string ToString() => Name;
     }
 }
