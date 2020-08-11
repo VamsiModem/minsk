@@ -70,7 +70,7 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("{ var a = 0 if a == 4 a = 10 else a = 5 a }", 5)]
         [InlineData("{ var i = 10 var result = 0 while i > 0 { result = result + i i = i - 1} result }", 55)]
         [InlineData("{ var result = 0 for i = 1 to 10 { result = result + i } result }", 55)]
-        
+
         public void SyntaxFact_GetText_RoundTrips(string text, object expectedValue)
         {
             var syntaxTree = SyntaxTree.Parse(text);
@@ -82,7 +82,8 @@ namespace Minsk.Tests.CodeAnalysis
             Assert.Equal(expectedValue, result.Value);
         }
         [Fact]
-        public void Evaluator_VariableDeclaration_Reports_Redeclaration(){
+        public void Evaluator_VariableDeclaration_Reports_Redeclaration()
+        {
             var text = @"
             {
                 var x = 10
@@ -98,13 +99,14 @@ namespace Minsk.Tests.CodeAnalysis
             ";
 
             AssertDiagnostics(text, diagnostics);
-            
+
         }
 
         [Fact]
-        public void Evaluator_Name_Reports_Undefined(){
+        public void Evaluator_Name_Reports_Undefined()
+        {
             var text = @"[x] = 10";
-            
+
             var diagnostics = @"
                 Variable with name 'x' doesn't exist.
             ";
@@ -113,13 +115,14 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_Assignment_Reports_CannotAssign(){
+        public void Evaluator_Assignment_Reports_CannotAssign()
+        {
             var text = @"
             {
                 let x = 10
                 x [=] 0
             }";
-            
+
             var diagnostics = @"
                 Variable 'x' is readonly and cannot be assigned to.
             ";
@@ -128,13 +131,14 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_Assignment_Reports_CannotConvert(){
+        public void Evaluator_Assignment_Reports_CannotConvert()
+        {
             var text = @"
             {
                 var x = 10
                 x = [true]
             }";
-            
+
             var diagnostics = @"
                 Cannot convert type 'System.Boolean' to 'System.Int32'.
             ";
@@ -142,15 +146,16 @@ namespace Minsk.Tests.CodeAnalysis
             AssertDiagnostics(text, diagnostics);
         }
 
-         [Fact]
-        public void Evaluator_IfStatement_Reports_CannotConvert(){
+        [Fact]
+        public void Evaluator_IfStatement_Reports_CannotConvert()
+        {
             var text = @"
             {
                 var x = 0
                 if [10]
                     x = 10
             }";
-            
+
             var diagnostics = @"
                 Cannot convert type 'System.Int32' to 'System.Boolean'.
             ";
@@ -159,14 +164,15 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_whileStatement_Reports_CannotConvert(){
+        public void Evaluator_whileStatement_Reports_CannotConvert()
+        {
             var text = @"
             {
                 var x = 0
                 while [10]
                     x = 10
             }";
-            
+
             var diagnostics = @"
                 Cannot convert type 'System.Int32' to 'System.Boolean'.
             ";
@@ -174,7 +180,8 @@ namespace Minsk.Tests.CodeAnalysis
             AssertDiagnostics(text, diagnostics);
         }
         [Fact]
-        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound(){
+        public void Evaluator_ForStatement_Reports_CannotConvert_LowerBound()
+        {
             var text = @"
             {
                 var x = 0
@@ -183,7 +190,7 @@ namespace Minsk.Tests.CodeAnalysis
                     x = x + 10
                 }  
             }";
-            
+
             var diagnostics = @"
                 Cannot convert type 'System.Boolean' to 'System.Int32'.
             ";
@@ -192,7 +199,8 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound(){
+        public void Evaluator_ForStatement_Reports_CannotConvert_UpperBound()
+        {
             var text = @"
             {
                 var x = 0
@@ -201,7 +209,7 @@ namespace Minsk.Tests.CodeAnalysis
                     x = x + 10
                 }  
             }";
-            
+
             var diagnostics = @"
                 Cannot convert type 'System.Boolean' to 'System.Int32'.
             ";
@@ -210,9 +218,10 @@ namespace Minsk.Tests.CodeAnalysis
         }
 
         [Fact]
-        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken(){
+        public void Evaluator_NameExpression_Reports_NoErrorForInsertedToken()
+        {
             var text = @"[]";
-            
+
             var diagnostics = @"
                 Unexpected token <EOFToken>, expected <IdentifierToken>
             ";
@@ -222,12 +231,13 @@ namespace Minsk.Tests.CodeAnalysis
 
 
         [Fact]
-        public void Evaluator_BlockStatement_NoInfiniteLoop(){
+        public void Evaluator_BlockStatement_NoInfiniteLoop()
+        {
             var text = @"
             {
                 
             [)][]";
-            
+
             var diagnostics = @"
                 Unexpected token <RParenToken>, expected <IdentifierToken>
                 Unexpected token <EOFToken>, expected <RBraceToken>
@@ -235,18 +245,21 @@ namespace Minsk.Tests.CodeAnalysis
 
             AssertDiagnostics(text, diagnostics);
         }
-        private void AssertDiagnostics(string text, string diagnosticText){
+        private void AssertDiagnostics(string text, string diagnosticText)
+        {
             var annotatedText = AnnotatedText.Parse(text);
             var syntaxTree = SyntaxTree.Parse(annotatedText.Text);
             var compilation = new Compilation(syntaxTree);
             var result = compilation.Evaluate(new Dictionary<VariableSymbol, object>());
 
             var expectedDiagnostics = AnnotatedText.UnindentLines(diagnosticText);
-            if(annotatedText.Spans.Length != expectedDiagnostics.Length){
+            if (annotatedText.Spans.Length != expectedDiagnostics.Length)
+            {
                 throw new Exception("Error: Must mark as many spans as there are expected diagnostics");
             }
             Assert.Equal(expectedDiagnostics.Length, result.Diagnostics.Length);
-            for(var i = 0; i < expectedDiagnostics.Length; i++){
+            for (var i = 0; i < expectedDiagnostics.Length; i++)
+            {
                 var expectedMessage = expectedDiagnostics[i];
                 var actualMessage = result.Diagnostics[i].Message;
                 Assert.Equal(expectedMessage, actualMessage);

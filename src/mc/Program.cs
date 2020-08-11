@@ -14,6 +14,7 @@ namespace Minsk
         internal static void Main(string[] args)
         {
             bool showTree = false;
+            bool showProgram = false;
             var variables = new Dictionary<VariableSymbol, object>();
             var textBuilder = new StringBuilder();
             Compilation previous = null;
@@ -36,7 +37,12 @@ namespace Minsk
                         showTree = !showTree;
                         Console.WriteLine(showTree ? "Showing parse trees.": "Not showing parse trees.");
                         continue;
-                    }else if (input.Equals("#cls")){
+                    } else if(input.Equals("#showprogram")){
+                        showProgram = !showProgram;
+                        Console.WriteLine(showProgram ? "Showing bound trees.": "Not showing bound trees.");
+                        continue;
+                    }
+                    else if (input.Equals("#cls")){
                         Console.Clear();
                         continue;
                     }else if (input.Equals("#reset")){
@@ -56,9 +62,11 @@ namespace Minsk
                 var compilation = previous is null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
                 var result = compilation.Evaluate(variables);
 
-                if(showTree){
+                if(showTree)
                     syntaxTree.Root.WriteTo(Console.Out);
-                }
+                if(showProgram)
+                    compilation.EmitTree(Console.Out);
+                
                 if(!result.Diagnostics.Any()){
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     Console.WriteLine(result.Value);

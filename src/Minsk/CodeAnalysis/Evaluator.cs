@@ -5,73 +5,58 @@ namespace Minsk.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-        private readonly BoundStatement _root;
+        private readonly BoundBlockStatement _root;
         private readonly Dictionary<VariableSymbol, object> _variables;
         private object _lastValue;
-        public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
+        public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
         {
             _root = root;
             _variables = variables;
         }
 
-        public object Evaluate(){
-             EvaluateStatement(_root);
-             return _lastValue;
-        }
-        private void EvaluateStatement(BoundStatement node)
+        public object Evaluate()
         {
-            switch (node.Kind)
+            var labelToIndex = new Dictionary<LabelSymbol, int>();
+            for (int i = 0; i < _root.Statements.Length; i++)
             {
-                case BoundNodeKind.BlockStatement:
-                    EvaluateBlockStatement((BoundBlockStatement)node);
-                    break;
-                case BoundNodeKind.VariableDeclaration:
-                    EvaluateVariableDeclaration((BoundVariableDeclaration)node);
-                    break;
-                case BoundNodeKind.IfStatement:
-                    EvaluateIfStatement((BoundIfStatement)node);
-                    break;
-                case BoundNodeKind.WhileStatement:
-                    EvaluatewhileStatement((BoundWhileStatement)node);
-                    break;
-                case BoundNodeKind.ExpressionStatement:
-                    EvaluateExpressionStatement((BoundExpressionStatement)node);
-                    break;
-                case BoundNodeKind.ForStatement:
-                    EvaluateForStatement((BoundForStatement)node);
-                    break;
-                default:
-                    throw new Exception($"Unexpected node {node.Kind}");
+                if (_root.Statements[i] is BoundLabelStatement l)
+                    labelToIndex.Add(l.Label, i + 1);
             }
-        }
-
-        private void EvaluateForStatement(BoundForStatement node)
-        {
-            var lowerBound = (int)EvaluateExpression(node.LowerBound);
-            var upperBound = (int)EvaluateExpression(node.UpperBound);
-            for(var i = lowerBound; i <= upperBound; i++){
-                 _variables[node.Variable] = i;
-                 EvaluateStatement(node.Body);
+            var index = 0;
+            while (index < _root.Statements.Length)
+            {
+                var s = _root.Statements[index];
+                switch (s.Kind)
+                {
+                    case BoundNodeKind.VariableDeclaration:
+                        EvaluateVariableDeclaration((BoundVariableDeclaration)s);
+                        index++;
+                        break;
+                    case BoundNodeKind.ExpressionStatement:
+                        EvaluateExpressionStatement((BoundExpressionStatement)s);
+                        index++;
+                        break;
+                    case BoundNodeKind.GotoStatement:
+                        index = labelToIndex[((BoundGotoStatement)s).Label];
+                        break;
+                    case BoundNodeKind.ConditionalGotoStatement:
+                        var cgs = ((BoundConditionalGotoStatement)s);
+                        var condition = (bool)EvaluateExpression(cgs.Condition);
+                        if (condition && !cgs.JumpIfFalse || !condition && cgs.JumpIfFalse)
+                            index = labelToIndex[cgs.Label];
+                        else
+                            index++;
+                        break;
+                    case BoundNodeKind.LabelStatement:
+                        index++;
+                        break;
+                    default:
+                        throw new Exception($"Unexpected node {s.Kind}");
+                }
             }
-           
-        }
 
-        private void EvaluatewhileStatement(BoundWhileStatement node)
-        {
-            while((bool)EvaluateExpression(node.Condition))
-                EvaluateStatement(node.Body);
+            return _lastValue;
         }
-
-        private void EvaluateIfStatement(BoundIfStatement node)
-        {
-            var condition = (bool)EvaluateExpression(node.Condition);
-            if(condition){
-                EvaluateStatement(node.ThenStatement);
-            }else if(node.ElseStatement != null){
-                EvaluateStatement(node.ElseStatement);
-            }
-        }
-
         private void EvaluateVariableDeclaration(BoundVariableDeclaration node)
         {
             var value = EvaluateExpression(node.Initializer);
@@ -82,12 +67,6 @@ namespace Minsk.CodeAnalysis
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
         {
             _lastValue = EvaluateExpression(node.Expression);
-        }
-
-        private void EvaluateBlockStatement(BoundBlockStatement node)
-        {
-            foreach(var statement in node.Statements)
-                EvaluateStatement(statement);
         }
 
         private object EvaluateExpression(BoundExpression root)
@@ -124,15 +103,15 @@ namespace Minsk.CodeAnalysis
                 case BoundBinaryOperatorKind.Division:
                     return (int)left / (int)right;
                 case BoundBinaryOperatorKind.BitwiseAnd:
-                    if(b.Type == typeof(int))
+                    if (b.Type == typeof(int))
                         return (int)left & (int)right;
                     else return (bool)left & (bool)right;
-                 case BoundBinaryOperatorKind.BitwiseOr:
-                    if(b.Type == typeof(int))
+                case BoundBinaryOperatorKind.BitwiseOr:
+                    if (b.Type == typeof(int))
                         return (int)left | (int)right;
                     else return (bool)left | (bool)right;
                 case BoundBinaryOperatorKind.BitwiseXOr:
-                    if(b.Type == typeof(int))
+                    if (b.Type == typeof(int))
                         return (int)left ^ (int)right;
                     else return (bool)left ^ (bool)right;
                 case BoundBinaryOperatorKind.LogicalAnd:
